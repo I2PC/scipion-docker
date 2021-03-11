@@ -165,16 +165,16 @@
       name: ['nvidia-container-toolkit', 'nvidia-container-runtime']
       update_cache: yes
 
-#  - name: Get GPU PCI port
-#    shell: nvidia-xconfig --query-gpu-info | grep 'PCI BusID' | cut -f2- -d':' | cut -f2- -d' '
-#    register: gpu_pci_port
-#  - name: Create xorg.conf
-#    shell: nvidia-xconfig -a --allow-empty-initial-configuration --use-display-device=None --virtual=1920x1080 --busid {{ gpu_pci_port.stdout }}
-#  - name: Add HardDPMS to xorg.conf
-#    lineinfile:
-#      path: /etc/X11/xorg.conf
-#      insertafter: '\s+Option\s+\"AllowEmptyInitialConfiguration\"\s+\"True\"'
-#      line: '    Option         "HardDPMS" "false"'
+  - name: Get GPU PCI port
+    shell: nvidia-xconfig --query-gpu-info | grep 'PCI BusID' | cut -f2- -d':' | cut -f2- -d' '
+    register: gpu_pci_port
+  - name: Create xorg.conf
+    shell: nvidia-xconfig -a --allow-empty-initial-configuration --use-display-device=None --virtual=1920x1080 --busid {{ gpu_pci_port.stdout }}
+  - name: Add HardDPMS to xorg.conf
+    lineinfile:
+      path: /etc/X11/xorg.conf
+      insertafter: '\s+Option\s+\"AllowEmptyInitialConfiguration\"\s+\"True\"'
+      line: '    Option         "HardDPMS" "false"'
   
   - name: Disable authorization for xdm
     lineinfile:
@@ -231,10 +231,10 @@
 #      cmd: make install
 #      chdir: "/tmp/slurm-{{ slurm_version }}"
 
-#  - name: Restart display-manager
-#    service:
-#      name: display-manager
-#      state: restarted
+  - name: Restart display-manager
+    service:
+      name: display-manager
+      state: restarted
   - name: Restart docker
     service:
       name: docker
