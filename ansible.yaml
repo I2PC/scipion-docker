@@ -28,81 +28,17 @@
 #  - name: Reboot the host to load a new kernel
 #    reboot:
 #      reboot_timeout: 300
+  - name: Create {{ scipion_user }} user
+    user:
+      name: "{{ scipion_user }}"
+      uid: 1042
 
-  - name: Remove nouveau driver
-    apt:
-      name: ['libdrm-nouveau2','xserver-xorg-video-nouveau']
-      autoremove: yes
-      state: absent
-      purge: yes
-
-  - name: Disable nouveau module
-    copy:
-      content: "blacklist nouveau\noptions nouveau modeset=0"
-      dest: /etc/modprobe.d/blacklist-nouveau.conf
-
-# Install nvidia driver - 1st option
-  - name: Install required packages for nvidia driver
-    apt:
-      name: ['dkms']
-      state: present
-      update_cache: yes
-  - name: Download script from nvidia
-    get_url:
-      url: https://us.download.nvidia.com/XFree86/Linux-x86_64/450.66/NVIDIA-Linux-x86_64-450.66.run
-      dest: /opt/cloudadm/NVIDIA-Linux-x86_64-450.66.run
-  - name: Add executable mode
+  - name: Create ScipionUserData dir
     file:
-      path: /opt/cloudadm/NVIDIA-Linux-x86_64-450.66.run
-      mode: +x
-  - name: Get uname -r
-    shell: uname -r
-    register: uname_r
-  - name: Install linux-headers
-    apt:
-      name: ['linux-source', 'linux-image-{{ uname_r.stdout }}', 'linux-headers-{{ uname_r.stdout }}']
-      state: present
-  - name: Install drivers
-    shell: /opt/cloudadm/NVIDIA-Linux-x86_64-450.66.run --silent
-
-# Install nvidia driver - 2nd option
-#  - name: Install required packages for nvidia driver
-#    apt:
-#      name: ['build-essential', 'gcc-multilib', 'dkms']
-#      state: present
-#      update_cache: yes
-#  - name: Get uname -r
-#    shell: uname -r
-#    register: uname_r
-#  - name: Install linux-headers
-#    apt:
-#      name: ['linux-source', 'linux-image-{{ uname_r.stdout }}', 'linux-headers-{{ uname_r.stdout }}']
-#      state: present
-#  - name: Download and install nvidia driver
-#    shell: wget https://developer.download.nvidia.com/compute/cuda/11.1.0/local_installers/cuda-repo-debian10-11-1-local_11.1.0-455.23.05-1_amd64.deb && dpkg -i cuda-repo-debian10-11-1-local_11.1.0-455.23.05-1_amd64.deb
-#  - name: Add key to install CUDA
-#    apt_key:
-#      file: /var/cuda-repo-debian10-11-1-local/7fa2af80.pub
-#      state: present
-#  - name: Add contrib repo
-#    shell: add-apt-repository contrib
-#  - name: Install CUDA
-#    apt:
-#      name: cuda
-#      update_cache: yes
-
-# Install nvidia driver - 3rd option
-# nefunguje, protoze po instalaci nelze najit balik nvidia-xconfig
-#  - name: Edit apt sources to install nvidia driver
-#    lineinfile:
-#      path: /etc/apt/sources.list
-#      regexp: 'deb\s+http://deb.debian.org/debian\s+buster-backports\s+main'
-#      line: 'deb http://deb.debian.org/debian buster-backports main contrib non-free'
-#  - name: Install nvidia driver from backports
-#    apt:
-#      name: ['nvidia-driver', 'nvidia-smi']
-#      default_release: buster-backports
-#      update_cache: yes
+      path: "/home/{{ scipion_user }}/ScipionUserData"
+      owner: "{{ scipion_user }}"
+      group: "{{ scipion_user }}"
+      state: directory
 
   - name: Install required packages
     apt:
@@ -110,16 +46,31 @@
       state: present
       update_cache: yes
 
+  - name: Add NVIDIA PPA
+    apt_repository:
+      repo: ppa:graphics-drivers/ppa
+      update_cache: yes
+
+  - name: Install nvidia-driver package
+    apt:
+      name: ['nvidia-driver-440', 'nvidia-cuda-dev']
+
+#  - name: Reboot server
+#    reboot:
+
   - name: Add docker GPG key
     apt_key:
       url: https://download.docker.com/linux/ubuntu/gpg
       state: present
+
   - name: Get release name
     shell: lsb_release -cs
     register: release_name
+
   - name: Get os name
     shell: . /etc/os-release; echo $ID
     register: os_name
+
   - name: Add docker registry
     apt_repository: repo='deb [arch=amd64] https://download.docker.com/linux/{{ os_name.stdout }} {{ release_name.stdout }} stable' state=present
 
@@ -138,6 +89,11 @@
     pip:
       name: docker
 
+  - name: Set mtu value to docker network
+    copy:
+      content: "{{ docker_runtime }}"
+      dest: /etc/docker/daemon.json
+
   - name: Add user to docker group and change shell
     shell: usermod --shell /bin/bash -aG docker cloudadm
 
@@ -149,113 +105,47 @@
   - name: Get release name
     shell: . /etc/os-release;echo $ID$VERSION_ID
     register: distribution
+
   - name: Add nvidia docker runtime source
     shell: 'curl -s -L https://nvidia.github.io/nvidia-docker/{{ distribution.stdout }}/nvidia-docker.list | tee /etc/apt/sources.list.d/nvidia-docker.list'
+
   - name: Add nvidia docker runtime GPG 1/2
     apt_key:
       url: https://nvidia.github.io/nvidia-docker/gpgkey
       state: present
+
   - name: Add nvidia docker runtime GPG 2/2
     apt_key:
       url: https://nvidia.github.io/nvidia-container-runtime/gpgkey
       state: present
-  
+
   - name: Install nvidia-container-toolkit and nvidia-container-runtime
     apt:
       name: ['nvidia-container-toolkit', 'nvidia-container-runtime']
       update_cache: yes
 
-  - name: Get GPU PCI port
-    shell: nvidia-xconfig --query-gpu-info | grep 'PCI BusID' | cut -f2- -d':' | cut -f2- -d' '
-    register: gpu_pci_port
-  - name: Create xorg.conf
-    shell: nvidia-xconfig -a --allow-empty-initial-configuration --use-display-device=None --virtual=1920x1080 --busid {{ gpu_pci_port.stdout }}
-  - name: Add HardDPMS to xorg.conf
-    lineinfile:
-      path: /etc/X11/xorg.conf
-      insertafter: '\s+Option\s+\"AllowEmptyInitialConfiguration\"\s+\"True\"'
-      line: '    Option         "HardDPMS" "false"'
-  
-  - name: Disable authorization for xdm
-    lineinfile:
-      path: /etc/X11/xdm/xdm-config
-      regexp: 'DisplayManager\*authorize:\s+true'
-      line: 'DisplayManager*authorize: false'
-  
   - name: Set nvidia as default docker runtime
     copy:
       content: "{{ docker_runtime }}"
       dest: /etc/docker/daemon.json
 
-#  - name: Set xinit startup 1/2
-#    shell: echo 'xinit &' | tee /etc/init.d/xinit
-#  - name: Set xinit startup 2/2
-#    shell: chmod 755 /etc/init.d/xinit
-
-  - name: Remove ".X11-unix" dir to prevent xorg issues
-    file:
-      path: /tmp/.X11-unix
-      state: absent
-
-  - name: Create {{ scipion_user }} user
-    user:
-      name: "{{ scipion_user }}"
-      uid: 1042
-  - name: Create ScipionUserData dir
-    file:
-      path: "/home/{{ scipion_user }}/ScipionUserData"
-      owner: "{{ scipion_user }}"
-      group: "{{ scipion_user }}"
-      state: directory
-
-#··  - name: Download SLURM package
-#    get_url:
-#      url: "http://ftpgrycap.i3m.upv.es/src/slurm-{{ slurm_version }}.tar.bz2"
-#      dest: /tmp/slurm.tar.bz2
-#  - name: Decompress SLURM package
-#    command:
-#      cmd: tar xjf slurm.tar.bz2
-#      chdir: /tmp
-#      creates: "/tmp/slurm-{{ slurm_version }}"
-#  - name: Configure SLURM
-#    command:
-#      cmd: ./configure
-#      chdir: "/tmp/slurm-{{ slurm_version }}"
-#      creates: "/tmp/slurm-{{ slurm_version }}/config.log"
-#  - name: Compile (make) SLURM
-#    command:
-#      cmd: make
-#      chdir: "/tmp/slurm-{{ slurm_version }}"
-#  - name: Install SLURM
-#    command:
-#      cmd: make install
-#      chdir: "/tmp/slurm-{{ slurm_version }}"
-
-  - name: Restart display-manager
-    service:
-      name: display-manager
-      state: restarted
   - name: Restart docker
     service:
       name: docker
       state: restarted
 
-  - name: Pull master node image
-    docker_image:
-      name: registry.gitlab.ics.muni.cz:443/eosc-synergy/scipion-docker/master-image:latest
-      pull: yes
   - name: Run master node
     docker_container:
       name: scipion-mn
-      image: registry.gitlab.ics.muni.cz:443/eosc-synergy/scipion-docker/master-image:latest
+      image: ldelcano/scipion-single:video_laura
       privileged: yes
       ports:
       - "5904:5904"
       volumes:
       - /tmp/.X11-unix/X0:/tmp/.X11-unix/X0
+      - /home/scipionuser/ScipionUserData:/home/scipionuser/ScipionUserData
       env:
         USE_DISPLAY: "4"
         MYVNCPASSWORD: "{{ vnc_pass }}"
         ROOT_PASS: "abc"
         USER_PASS: "abc"
-
