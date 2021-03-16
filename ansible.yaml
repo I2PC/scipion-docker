@@ -58,7 +58,7 @@
 #  - name: Reboot server
 #    reboot:
   - name: Remove nouveau kernel module
-      command: /sbin/rmmod nouveau
+    command: /sbin/rmmod nouveau
 
   - name: Load nvidia kernel module
     modprobe:
