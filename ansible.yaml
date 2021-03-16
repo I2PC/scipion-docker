@@ -57,6 +57,20 @@
 
 #  - name: Reboot server
 #    reboot:
+   - name: Unload mouveau kernel module
+     modprobe:
+       name: nouveau
+       state: absent
+
+   - name: Load nvidia-uvm kernel module
+     modprobe:
+       name: nvidia-uvm
+       state: present
+       
+   - name: Load nvidia kernel module
+     modprobe:
+       name: nvidia
+       state: present
 
   - name: Add docker GPG key
     apt_key:
