@@ -21,7 +21,8 @@ RUN apt update && DEBIAN_FRONTEND=noninteractive apt install -y \
 	xauth \
 	xterm \
 	konsole \
-	pluma
+	pluma \
+	firefox
 
 # libjpeg-turbo requirements
 RUN apt update && apt install -y --no-install-recommends \
@@ -38,7 +39,8 @@ RUN apt update && apt install -y --no-install-recommends \
 	vim \
 	sudo \
 	mesa-utils \
-	htop
+	htop \
+	iputils-ping
 
 # Clean apt
 RUN rm -rf /var/lib/apt/lists/*
@@ -80,6 +82,12 @@ USER ${S_USER}
 # Install plugins for Scipion
 COPY plugin-list.txt ${S_USER_HOME}/
 RUN for pl in $(cat ${S_USER_HOME}/plugin-list.txt); do ${S_USER_HOME}/scipion3/scipion3 installp -p $pl -j $(nproc); rm ${S_USER_HOME}/scipion3/software/em/*gz; done
+
+# Install cryosparc
+USER ${S_USER}
+COPY install_cryosparc.sh ${S_USER_HOME}
+WORKDIR ${S_USER_HOME}
+RUN ${S_USER_HOME}/install_cryosparc.sh
 
 USER root
 #######################
