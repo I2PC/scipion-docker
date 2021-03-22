@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Scipion
+Comment=
+Exec=/home/scipionuser/scipion3/scipion3
+Icon=/home/scipionuser/scipion3/scipion_logo.png
+Path=/home/scipionuser/
+Terminal=true
+StartupNotify=false
