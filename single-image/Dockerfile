@@ -81,13 +81,14 @@ USER ${S_USER}
 
 # Install plugins for Scipion
 COPY plugin-list.txt ${S_USER_HOME}/
-RUN for pl in $(cat ${S_USER_HOME}/plugin-list.txt); do ${S_USER_HOME}/scipion3/scipion3 installp -p $pl -j $(nproc); rm ${S_USER_HOME}/scipion3/software/em/*gz; done
+RUN for pl in $(cat ${S_USER_HOME}/plugin-list.txt); do ${S_USER_HOME}/scipion3/scipion3 installp -p $pl -j $(nproc); done
+RUN  rm ${S_USER_HOME}/scipion3/software/em/*gz
 
 # Install cryosparc
-USER ${S_USER}
-COPY install_cryosparc.sh ${S_USER_HOME}
-WORKDIR ${S_USER_HOME}
-RUN ${S_USER_HOME}/install_cryosparc.sh
+#USER ${S_USER}
+#COPY install_cryosparc.sh ${S_USER_HOME}
+#WORKDIR ${S_USER_HOME}
+#RUN ${S_USER_HOME}/install_cryosparc.sh
 
 USER root
 #######################
