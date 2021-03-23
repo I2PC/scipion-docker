@@ -155,9 +155,9 @@
       - "5904:5904"
       volumes:
       - /tmp/.X11-unix/X0:/tmp/.X11-unix/X0
-      - /home/scipionuser/ScipionUserData:/home/scipionuser/ScipionUserData
+      - /data:/home/scipionuser/ScipionUserData
       env:
         USE_DISPLAY: "4"
         MYVNCPASSWORD: "{{ vnc_pass }}"
-        ROOT_PASS: "abc"
-        USER_PASS: "abc"
+        ROOT_PASS: "{{ vnc_pass }}"
+        USER_PASS: "{{ vnc_pass }}"
