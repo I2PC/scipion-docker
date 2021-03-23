@@ -32,10 +32,6 @@ topology_template:
       default: 10 GB
       constraints:
       - valid_values: [ 10 GB, 20 GB, 50 GB, 100 GB, 200 GB, 500 GB, 1 TB, 2 TB ]
-    volume_id:
-      type: string
-      description: "Or URL of the disk to be attached to the instance (format: ost://api.cloud.ifca.es/<vol_id>"
-      default: ""
 
   node_templates:
 
