@@ -16,6 +16,7 @@ chown $S_USER:$S_USER $S_USER_HOME/scipion3/software/em
 
 mkdir ${S_USER_HOME}/ScipionUserData/data
 chown -R $S_USER:$S_USER $S_USER_HOME/.config
+chown -R $S_USER:$S_USER $S_USER_HOME/ScipionUserData
 
 su -c ./docker-entrypoint.sh $S_USER
 
