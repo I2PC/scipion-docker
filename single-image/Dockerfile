@@ -85,10 +85,13 @@ RUN for pl in $(cat ${S_USER_HOME}/plugin-list.txt); do ${S_USER_HOME}/scipion3/
 RUN  rm ${S_USER_HOME}/scipion3/software/em/*gz
 
 # Install cryosparc
-#USER ${S_USER}
-#COPY install_cryosparc.sh ${S_USER_HOME}
-#WORKDIR ${S_USER_HOME}
-#RUN ${S_USER_HOME}/install_cryosparc.sh
+USER ${S_USER}
+RUN mkdir ${S_USER_HOME}/cryosparc3
+ENV CRYOS_LICENSE_ID a3dc0cc0-3181-11ea-84d0-8b3771c7f13b
+RUN curl -L https://get.cryosparc.com/download/master-latest/$CRYOS_LICENSE_ID -o ${S_USER_HOME}/cryosparc3/cryosparc_master.tar.gz
+RUN curl -L https://get.cryosparc.com/download/worker-latest/$CRYOS_LICENSE_ID -o ${S_USER_HOME}/cryosparc3/cryosparc_worker.tar.gz
+RUN tar -xf ${S_USER_HOME}/cryosparc3/cryosparc_master.tar.gz -C ${S_USER_HOME}/cryosparc3
+RUN tar -xf ${S_USER_HOME}/cryosparc3/cryosparc_worker.tar.gz -C ${S_USER_HOME}/cryosparc3
 
 USER root
 #######################
