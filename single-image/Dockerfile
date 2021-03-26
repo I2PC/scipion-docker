@@ -92,6 +92,12 @@ RUN curl -L https://get.cryosparc.com/download/master-latest/$CRYOS_LICENSE_ID -
 RUN curl -L https://get.cryosparc.com/download/worker-latest/$CRYOS_LICENSE_ID -o ${S_USER_HOME}/cryosparc3/cryosparc_worker.tar.gz
 RUN tar -xf ${S_USER_HOME}/cryosparc3/cryosparc_master.tar.gz -C ${S_USER_HOME}/cryosparc3
 RUN tar -xf ${S_USER_HOME}/cryosparc3/cryosparc_worker.tar.gz -C ${S_USER_HOME}/cryosparc3
+COPY install_cryosparc.sh ${S_USER_HOME}/
+USER root
+RUN chown ${S_USER}.${S_USER} ${S_USER_HOME}/install_cryosparc.sh
+RUN chmod +x ${S_USER_HOME}/install_cryosparc.sh
+USER ${S_USER}
+RUN cd ${S_USER_HOME} && ${S_USER_HOME}/install_cryosparc.sh
 
 USER root
 #######################
