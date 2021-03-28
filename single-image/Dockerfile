@@ -1,6 +1,6 @@
 
 #FROM registry.gitlab.ics.muni.cz:443/eosc-synergy/scipion-docker/base-image:dev
-FROM ldelcano/scipion-base:slurm
+FROM ldelcano/scipion-base:video_laura
 
 ARG TURBOVNC_VERSION=2.2.4
 ARG VIRTUALGL_VERSION=2.5.2
