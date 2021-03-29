@@ -99,6 +99,9 @@ RUN chmod +x ${S_USER_HOME}/install_cryosparc.sh
 USER ${S_USER}
 RUN cd ${S_USER_HOME} && ${S_USER_HOME}/install_cryosparc.sh
 
+# Install deeplearningtoolkit
+RUN ${S_USER_HOME}/scipion3/scipion3 installb deepLearningToolkit -j $(nproc)
+
 # Modify MOTIONCOR2_BIN variable to point to cuda10.2 binary
 RUN echo MOTIONCOR2_BIN=${S_USER_HOME}/software/em/motioncor2-1.4.0/bin/MotionCor2_1.4.0_Cuda102 >> ${S_USER_HOME}/scipion3/config/scipion.conf
 
