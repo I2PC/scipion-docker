@@ -5,9 +5,8 @@ This repo contains all pieces of code needed to deploy an scipion single node or
 ## Deploy Scipion using IM dashboard
 
 This is the production way.
-### 1. Go to [IM-dashboard](https://appsgrycap.i3m.upv.es:31443/im-dashboard/login) and log in with your account
-### 2. Make sure your account can use cryoem.instruct-eric.eu Virtual Organization
-Access can be requested [here](https://aai.egi.eu/registry/co_petitions/start/coef:84).
+### 1. Go to [IM-dashboard](https://appsgrycap.i3m.upv.es:31443/im-dashboard/login) and log in with your account.
+### 2. Make sure your account belongs to a Virtual Organization that is granted to use the appropiate hardware resources. You can also deploy on AWS EC2 instances selecting the g4dn family instance type.
 
 Go to the credentials menu on the right-upper part of the page and add the sites where you want to deploy. Currently the following VOs support this service: IFCA, CESNET and IISAS FedCloud.
 
