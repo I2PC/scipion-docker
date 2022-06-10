@@ -1,5 +1,5 @@
 
-FROM rinchen.cnb.csic.es/eosc-synergy/scipion-worker:devel
+FROM rinchen.cnb.csic.es/eosc-synergy/scipion-worker:master
 
 ARG TURBOVNC_VERSION=2.2.4
 ARG LIBJPEG_VERSION=1.5.2
