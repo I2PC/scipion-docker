@@ -78,6 +78,6 @@
 
   - name: pull scipion-worker image
     docker_image:
-      name: rinchen.cnb.csic.es/eosc-synergy/scipion-worker:devel
+      name: rinchen.cnb.csic.es/eosc-synergy/scipion-worker:master
       source: pull
 
