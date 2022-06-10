@@ -35,7 +35,14 @@
     #docker_config_values: {"mtu": 1442, "data-root": '/home/scipionuser/volume-data/docker'}
     docker_config_values: {"mtu": 1442}
     docker_nvidia_support: true
-    when: gpu_num|int > 0
+    docker_nvidia_driver_version: 440
+    when: gpu_num_server|int > 0
+  - role: grycap.docker
+    #docker_config_values: {"mtu": 1442, "data-root": '/home/scipionuser/volume-data/docker'}
+    docker_config_values: {"mtu": 1442}
+    docker_nvidia_support: false
+    when: gpu_num_server|int == 0
+
   - role: grycap.docker
     #docker_config_values: {"mtu": 1442, "data-root": '/home/scipionuser/volume-data/docker'}
     docker_config_values: {"mtu": 1442}

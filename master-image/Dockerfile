@@ -18,6 +18,11 @@ ARG NOGPU
 USER root
 #######################
 
+# Update nvidia repo keys
+RUN apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/3bf863cc.pub
+
+RUN apt-get update && apt-get upgrade -y
+
 # Install necessary packages - xfce4, term, editor
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
 	dbus-x11 \
