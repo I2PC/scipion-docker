@@ -16,6 +16,8 @@ chown munge.munge /etc/munge/munge.key
 
 service munge start
 
+service ssh start
+
 chown -R $S_USER:$S_USER $S_USER_HOME/.config
 chown $S_USER:$S_USER $S_USER_HOME/scipion3/config/hosts.conf
 chown $S_USER:$S_USER $S_USER_HOME/ScipionUserData

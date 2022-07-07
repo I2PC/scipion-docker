@@ -35,7 +35,7 @@
       slurm_wn_gres_conf: AutoDetect=nvml
       slurm_wn_gres_tpes: gpu
       docker_nvidia_support: true
-    when: gpu_num_wn|int > 0
+    when: gpu_num_server|int > 0
 
   roles:
   - role: indigo-dc.nfs

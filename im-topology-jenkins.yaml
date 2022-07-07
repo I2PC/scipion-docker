@@ -14,7 +14,7 @@ topology_template:
       type: string
       description: VNC password
       required: yes
-      default: xxxxxxxx
+      default: Scipion4U
     cryosparc_license:
       type: string
       description: Cryosparc license id
@@ -24,18 +24,18 @@ topology_template:
       type: integer
       description: Number of GPUs to assing to the master
       required: yes
-      default: 1
+      default: 0
     num_cpus_master:
       type: integer
       description: Numbers of CPUs to assign to the master
       required: yes
-      default: 8
+      default: 4
       constraints:
       - valid_values: [ 2, 4, 8, 16, 32, 64 ]
     mem_size_master:
       type: scalar-unit.size
       description: Ammount of RAM (GB) to assign to the master
-      default: 30 GB
+      default: 4 GB
       required: yes
       constraints:
       - valid_values: [ 4 GB, 8 GB, 16 GB, 32 GB, 64 GB, 128 GB ]
@@ -54,49 +54,16 @@ topology_template:
       type: integer
       description: Numbers of CPUs to assign to the worker
       required: yes
-      default: 8
+      default: 4
       constraints:
       - valid_values: [ 2, 4, 8, 16, 32, 64 ]
     mem_size_worker:
       type: scalar-unit.size
       description: Ammount of RAM (GB) to assign to the worker
-      default: 30 GB
+      default: 4 GB
       required: yes
       constraints:
       - valid_values: [ 4 GB, 8 GB, 16 GB, 32 GB, 64 GB, 128 GB ]
-    #master_instance_type: # Need GPU to make cryosparc work
-    #  type: string
-    #  description: Instance type of Scipion master node
-    #  required: yes
-    #  default: 'g1.c08r30-K20m' #IISAS-FedCloud GPU
-      #default: 'm1.huge' #IISAS-FedCloud no GPU
-      #default: 'cm4.large' #IFCA no GPU
-      #default: 'g7.8xlarge' #IFCA GPU
-      #default: 'hpc.8core-64ram-nvidia-1080-glados' #CESNET GPU
-      #default: 'hpc.64core-512ram-nvidia-t4' # CESNET GPU
-      #default: 'standard.medium' #CESNET no GPU
-
-    #worker_instance_type:
-     # type: string
-     # description: Instance type of Scipion worker node
-     # required: no
-     # default: 'm1.huge' #IISAS-FedCloud
-     # #default: 'g7.8xlarge' #IFCA
-     # #default: 'cm4.large' #IFCA no GPU
-      #default: 'standard.medium' #CESNET
-      #default: 'hpc.64core-512ram-nvidia-t4' # CESNET GPU
-    #network_name_pub:
-    #  type: string
-    #  description: Public network name (only needed for CESNET = public-muni-147-251-21-GROUP)
-    #  required: no
-    #  #default: 'public-muni-147-251-21-GROUP'
-    #  default: ''
-    #network_name_priv:
-    #  type: string
-    #  description: Private network name (only needed for CESNET = group-project-network)
-    #  required: no
-    #  #default: 'group-project-network'
-    #  default: ''
     disk_size:
       type: scalar-unit.size
       description: Size of the disk to be attached to the FE instance
@@ -154,7 +121,6 @@ topology_template:
                 source: 2222
         host:
           properties:
-            #instance_type: { get_input: master_instance_type }
             num_gpus: { get_input: num_gpus_master }
             num_cpus: { get_input: num_cpus_master }
             mem_size: { get_input: mem_size_master }
@@ -208,7 +174,6 @@ topology_template:
             dns_name: scipion-wn-#N#
         host:
           properties:
-            #instance_type: { get_input: worker_instance_type }
             num_gpus: { get_input: num_gpus_worker }
             num_cpus: { get_input: num_cpus_worker }
             mem_size: { get_input: mem_size_worker }

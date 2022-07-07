@@ -4,6 +4,12 @@ ARG S_USER=scipionuser
 ARG S_USER_HOME=/home/${S_USER}
 ARG XMIPP_VERSION=xmippSrc-v3.22.04.0
 
+LABEL LICENSE_RELION="https://raw.githubusercontent.com/3dem/relion/master/LICENSE" \
+      LICENSE_CISTEM="http://license.janelia.org/license/janelia_license_1_2.html" \
+#      LICENSE_MOTIONCORR2="https://docs.google.com/forms/d/e/1FAIpQLSfAQm5MA81qTx90W9JL6ClzSrM77tytsvyyHh1ZZWrFByhmfQ/viewform" \
+      LICENSE_FSC3D="https://3dfsc.salk.edu/upload/info/"
+
+
 # Update nvidia repo keys
 RUN apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/3bf863cc.pub
 
@@ -106,11 +112,7 @@ RUN ${S_USER_HOME}/scipion3/scipion3 installb deepLearningToolkit -j $(nproc)
 # Set the correct binary versions (this has to be reviewd to make it cleaner)
 
 # Modify MOTIONCOR2_BIN variable to point to cuda10.2 binary
-RUN echo MOTIONCOR2_BIN=${S_USER_HOME}/scipion3/software/em/motioncor2-1.4.7/bin/MotionCor2_1.4.7_Cuda102_12-09-2021 >> ${S_USER_HOME}/scipion3/config/scipion.conf
-
-# Install relion-3.1.1
-#RUN ${S_USER_HOME}/scipion3/scipion3 installb relion-3.1.3 -j $(nproc)
-#RUN echo RELION_HOME=${S_USER_HOME}/scipion3/software/em/relion-3.1.3 >> ${S_USER_HOME}/scipion3/config/scipion.conf
+#RUN echo MOTIONCOR2_BIN=${S_USER_HOME}/scipion3/software/em/motioncor2-1.4.7/bin/MotionCor2_1.4.7_Cuda102_12-09-2021 >> ${S_USER_HOME}/scipion3/config/scipion.conf
 
 # Fix conda fonts
 RUN wget https://anaconda.org/scipion/tk/8.6.10/download/linux-64/tk-8.6.10-h14c3975_1005.tar.bz2 -O ${S_USER_HOME}/tk-8.6.10-h14c3975_1005.tar.bz2

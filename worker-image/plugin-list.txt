@@ -1,6 +1,6 @@
 scipion-em-gautomatch
 scipion-em-gctf
-scipion-em-motioncorr
+#scipion-em-motioncorr
 scipion-em-relion
 scipion-em-cistem
 scipion-em-fsc3d
