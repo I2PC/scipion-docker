@@ -73,11 +73,11 @@
 #      state: restarted
 
   - name: Run Scipion master container
-    #shell: docker run -d --name=scipionmaster --hostname=scipionmaster --privileged -p 5904:5904 -p 2222:22 -e USE_DISPLAY="4" -e ROOT_PASS="abc" -e USER_PASS="abc" -e MYVNCPASSWORD="1234" -e CRYOSPARC_LICENSE="a3dc0cc0-3181-11ea-84d0-8b3771c7f13b" -v /tmp/.X11-unix/X0:/tmp/.X11-unix/X0 -v /home/scipionuser/ScipionUserData:/home/scipionuser/ScipionUserData -v /usr/local/etc/slurm.conf:/usr/local/etc/slurm.conf -v /usr/local/etc/gres.conf:/usr/local/etc/gres.conf -v /etc/munge/munge.key:/etc/munge/munge.key --add-host scipion-master:ip rinchen.cnb.csic.es/eosc-synergy/scipion-master:master
+    #shell: docker run -d --name=scipionmaster --hostname=scipionmaster --privileged -p 5904:5904 -p 2222:22 -e USE_DISPLAY="4" -e ROOT_PASS="abc" -e USER_PASS="abc" -e MYVNCPASSWORD="1234" -e CRYOSPARC_LICENSE="a3dc0cc0-3181-11ea-84d0-8b3771c7f13b" -v /tmp/.X11-unix/X0:/tmp/.X11-unix/X0 -v /home/scipionuser/ScipionUserData:/home/scipionuser/ScipionUserData -v /usr/local/etc/slurm.conf:/usr/local/etc/slurm.conf -v /usr/local/etc/gres.conf:/usr/local/etc/gres.conf -v /etc/munge/munge.key:/etc/munge/munge.key --add-host scipion-master:ip rinchen.cnb.csic.es/eosc-synergy/scipion-master:devel
     docker_container:
       name: scipionmaster
       hostname: scipionmaster
-      image: rinchen.cnb.csic.es/eosc-synergy/scipion-master:master
+      image: rinchen.cnb.csic.es/eosc-synergy/scipion-master:devel
       privileged: yes
       published_ports:
         - "5904:5904"
