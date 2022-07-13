@@ -46,8 +46,8 @@
     nfs_client_imports: [{ local: "/home/scipionuser/volume-data", remote: "/home/scipionuser/volume-data", server_host: "{{ slurm_front_end_ip }}", opts: "defaults,nolock" }]
 
   - role: grycap.docker
-    #docker_config_values: {"mtu": 1442, "data-root": '/home/scipionuser/volume-data/docker'}
-    docker_config_values: {"mtu": 1442}
+    docker_config_values: {"mtu": 1442, "data-root": '/home/scipionuser/volume-data/docker'}
+    #docker_config_values: {"mtu": 1442}
     docker_nvidia_driver_version: 440
 
   - role: grycap.slurm

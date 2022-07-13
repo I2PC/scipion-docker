@@ -49,8 +49,8 @@
     nfs_mode: 'server'
     nfs_exports: [{path: "/home/scipionuser/volume-data", export: "{{ vnode_prefix }}*.localdomain(fsid=0,rw,async,no_root_squash,no_subtree_check,insecure)"}]
   - role: grycap.docker
-    #docker_config_values: {"mtu": 1442, "data-root": '/home/scipionuser/volume-data/docker'}
-    docker_config_values: {"mtu": 1442}
+    docker_config_values: {"mtu": 1442, "data-root": '/home/scipionuser/volume-data/docker'}
+    #docker_config_values: {"mtu": 1442}
     docker_nvidia_driver_version: 440
 
   - role: grycap.slurm
