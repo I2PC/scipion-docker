@@ -18,7 +18,7 @@
 
   - name: Create ScipionUserData folder
     file:
-      path: /home/scipionuser/volume_data/ScipionUserData
+      path: /home/scipionuser/volume-data/ScipionUserData
       state: directory
       owner: scipionuser
       group: scipionuser
@@ -43,7 +43,7 @@
   roles:
   - role: indigo-dc.nfs
     nfs_mode: 'client'
-    nfs_client_imports: [{ local: "/home/scipionuser/ScipionUserData", remote: "/home/scipionuser/ScipionUserData", server_host: "{{ slurm_front_end_ip }}", opts: "defaults,nolock" }]
+    nfs_client_imports: [{ local: "/home/scipionuser/volume-data", remote: "/home/scipionuser/volume-data", server_host: "{{ slurm_front_end_ip }}", opts: "defaults,nolock" }]
 
   - role: grycap.docker
     #docker_config_values: {"mtu": 1442, "data-root": '/home/scipionuser/volume-data/docker'}
