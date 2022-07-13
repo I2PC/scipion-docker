@@ -16,6 +16,13 @@
       shell: /bin/bash
       group: scipionuser
 
+  - name: Create ScipionUserData folder
+    file:
+      path: /home/scipionuser/volume_data/ScipionUserData
+      state: directory
+      owner: scipionuser
+      group: scipionuser
+
   - name: Install required packages
     apt:
       name: ['xdm', 'curl', 'wget', 'git', 'htop', 'apt-transport-https', 'ca-certificates', 'gnupg-agent', 'software-properties-common', 'xserver-xorg', 'pkg-config']

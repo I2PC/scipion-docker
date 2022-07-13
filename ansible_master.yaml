@@ -17,6 +17,13 @@
       shell: /bin/bash
       group: scipionuser
 
+  - name: Create ScipionUserData folder
+    file:
+      path: /home/scipionuser/volume_data/ScipionUserData
+      state: directory
+      owner: scipionuser
+      group: scipionuser
+
   - name: Install required packages
     apt:
       name: ['xdm', 'curl', 'wget', 'git', 'htop', 'apt-transport-https', 'ca-certificates', 'gnupg-agent', 'software-properties-common', 'xserver-xorg', 'pkg-config']
@@ -40,7 +47,7 @@
   roles:
   - role: indigo-dc.nfs
     nfs_mode: 'server'
-    nfs_exports: [{path: "/home/scipionuser/ScipionUserData", export: "{{ vnode_prefix }}*.localdomain(fsid=0,rw,async,no_root_squash,no_subtree_check,insecure)"}]
+    nfs_exports: [{path: "/home/scipionuser/volume_data", export: "{{ vnode_prefix }}*.localdomain(fsid=0,rw,async,no_root_squash,no_subtree_check,insecure)"}]
   - role: grycap.docker
     #docker_config_values: {"mtu": 1442, "data-root": '/home/scipionuser/volume-data/docker'}
     docker_config_values: {"mtu": 1442}
@@ -73,7 +80,7 @@
 #      state: restarted
 
   - name: Run Scipion master container
-    #shell: docker run -d --name=scipionmaster --hostname=scipionmaster --privileged -p 5904:5904 -p 2222:22 -e USE_DISPLAY="4" -e ROOT_PASS="abc" -e USER_PASS="abc" -e MYVNCPASSWORD="1234" -e CRYOSPARC_LICENSE="a3dc0cc0-3181-11ea-84d0-8b3771c7f13b" -v /tmp/.X11-unix/X0:/tmp/.X11-unix/X0 -v /home/scipionuser/ScipionUserData:/home/scipionuser/ScipionUserData -v /usr/local/etc/slurm.conf:/usr/local/etc/slurm.conf -v /usr/local/etc/gres.conf:/usr/local/etc/gres.conf -v /etc/munge/munge.key:/etc/munge/munge.key --add-host scipion-master:ip rinchen.cnb.csic.es/eosc-synergy/scipion-master:devel
+    #shell: docker run -d --name=scipionmaster --hostname=scipionmaster --privileged -p 5904:5904 -p 2222:22 -e USE_DISPLAY="4" -e ROOT_PASS="abc" -e USER_PASS="abc" -e MYVNCPASSWORD="1234" -e CRYOSPARC_LICENSE="a3dc0cc0-3181-11ea-84d0-8b3771c7f13b" -v /tmp/.X11-unix/X0:/tmp/.X11-unix/X0 -v /home/scipionuser/volume_data/ScipionUserData:/home/scipionuser/ScipionUserData -v /usr/local/etc/slurm.conf:/usr/local/etc/slurm.conf -v /usr/local/etc/gres.conf:/usr/local/etc/gres.conf -v /etc/munge/munge.key:/etc/munge/munge.key --add-host scipion-master:ip rinchen.cnb.csic.es/eosc-synergy/scipion-master:devel
     docker_container:
       name: scipionmaster
       hostname: scipionmaster
@@ -90,7 +97,7 @@
         CRYOSPARC_LICENSE: "{{ cryosparc_license }}"
       volumes:
         - /tmp/.X11-unix/X0:/tmp/.X11-unix/X0
-        - /home/scipionuser/ScipionUserData:/home/scipionuser/ScipionUserData
+        - /home/scipionuser/volume_data/ScipionUserData:/home/scipionuser/ScipionUserData
         - /usr/local/etc/slurm.conf:/usr/local/etc/slurm.conf
         - /usr/local/etc/gres.conf:/usr/local/etc/gres.conf
         - /etc/munge/munge.key:/etc/munge/munge.key
