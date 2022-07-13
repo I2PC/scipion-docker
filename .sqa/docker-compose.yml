@@ -1,0 +1,32 @@
+services:
+  scipion-hadolint:
+    command: sleep 6000000
+    image: hadolint/hadolint:latest-alpine
+    volumes:
+    - source: ./
+      target: /sqaaas-build
+      type: bind
+    working_dir: /sqaaas-build
+  scipion-master:
+    build:
+      args:
+        NOGPU: 'yes'
+      context: ./master-image
+      dockerfile: Dockerfile
+    command: sleep 6000000
+    volumes:
+    - source: ./
+      target: /sqaaas-build
+      type: bind
+    working_dir: /sqaaas-build
+  scipion-worker:
+    build:
+      context: ./worker-image
+      dockerfile: Dockerfile
+    command: sleep 6000000
+    volumes:
+    - source: ./
+      target: /sqaaas-build
+      type: bind
+    working_dir: /sqaaas-build
+version: '3.7'

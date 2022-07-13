@@ -5,8 +5,6 @@ set -xe
 S_USER=scipionuser
 S_USER_HOME=/home/${S_USER}
 
-ln -s ${S_USER_HOME}/ScipionUserData/data ${S_USER_HOME}/scipion3/data
-
 export PATH="/usr/local/nvidia/bin:/usr/local/cuda/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/TurboVNC/bin"
 
 # Update cryosparc hostname and license
@@ -17,6 +15,15 @@ sudo -u $S_USER $S_USER_HOME/cryosparc3/cryosparc_master/bin/cryosparcm restart
 set +e
 # Connect worker
 sudo -u $S_USER $S_USER_HOME/cryosparc3/cryosparc_worker/bin/cryosparcw connect --worker $HOSTNAME --master $HOSTNAME --nossd
+
+# Create dirs and simlinks
+mkdir -p ${S_USER_HOME}/ScipionUserData/data
+mkdir -p ${S_USER_HOME}/ScipionUserData/scipion_projects
+ln -s ${S_USER_HOME}/ScipionUserData/scipion_projects ${S_USER_HOME}/cryosparc3/scipion_projects
+
+# Update scipion (comment it out by now, not sure if it is good idea to update it anytime, better to have a controlled version)
+#${S_USER_HOME}/scipion3/scipion3 update
+
 set -e
 
 echo $USE_DISPLAY
