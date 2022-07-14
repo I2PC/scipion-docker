@@ -84,7 +84,7 @@
     docker_container:
       name: scipionmaster
       hostname: scipionmaster
-      image: rinchen.cnb.csic.es/eosc-synergy/scipion-master:devel
+      image: rinchen.cnb.csic.es/eosc-synergy/scipion-master:master
       privileged: yes
       published_ports:
         - "5904:5904"
