@@ -1,5 +1,7 @@
 # Scipion-docker
 
+![SCIPION DOCKER](ScipionCloud_icon.png)
+
 This repo contains all pieces of code needed to deploy an scipion single node or a slurm cluster.
 
 There are three layers in this architecture: docker images at the botton, host machines in the middle and cloud infrastructure on the top.
