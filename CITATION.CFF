@@ -1,0 +1,45 @@
+{
+    "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+    "@type": "SoftwareSourceCode",
+    "license": "https://spdx.org/licenses/GPL-3.0",
+    "codeRepository": "git+https://github.com/I2PC/scipion-docker",
+    "dateCreated": "2022-10-10",
+    "datePublished": "2022-10-10",
+    "dateModified": "2022-10-10",
+    "downloadUrl": "https://scipion-em.github.io/docs/release-3.0.0/docs/scipion-modes/how-to-install.html",
+    "name": "Scipion 3 (Docker)",
+    "version": "3.0.0",
+    "description": "Scipion 3 software suite, packed in a Docker environment",
+    "applicationCategory": "Scientific",
+    "releaseNotes": "Added CodeMeta",
+    "developmentStatus": "active",
+    "referencePublication": "https://doi.org/10.1016/j.jsb.2016.04.010",
+    "funder": {
+        "@type": "Organization",
+        "name": "Centro Nacional de Biotecnología CSIC"
+    },
+    "keywords": [
+        "software",
+        "em",
+        "cryo-em",
+        "processing",
+        "image",
+        "reproducibility",
+        "workflow",
+        "software package"
+    ],
+    "programmingLanguage": [
+        "Python3",
+        "Java",
+        "CUDA"
+    ],
+    "runtimePlatform": [
+        "JVM"
+    ],
+    "operatingSystem": [
+        "Ubuntu 18.04"
+    ],
+    "relatedLink": [
+        "https://scipion.i2pc.es/"
+    ]
+}
