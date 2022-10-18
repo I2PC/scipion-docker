@@ -69,52 +69,47 @@ ENV NVIDIA_DRIVER_CAPABILITIES compute,utility
 USER ${S_USER}
 #######################
 
-RUN ["/bin/bash", "-c", "echo $CUDA_HOME"]
-RUN ["/bin/bash", "-c", "echo $PATH"]
+#RUN ["/bin/bash", "-c", "echo $CUDA_HOME"] && ["/bin/bash", "-c", "echo $PATH"]
 
 
 # Install Scipion
-RUN wget --progress=dot:giga https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ${S_USER_HOME}/miniconda.sh \
-&& bash ${S_USER_HOME}/miniconda.sh -b \
-&& ${S_USER_HOME}/miniconda3/bin/conda init \
+RUN wget --progress=dot:giga https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O "${S_USER_HOME}"/miniconda.sh \
+&& bash "${S_USER_HOME}"/miniconda.sh -b \
+&& "${S_USER_HOME}"/miniconda3/bin/conda init \
 && ["/bin/bash", "-ci" , "python3 -m pip install scipion-installer"] \
 && ["/bin/bash", "-ci" , "cd ${S_USER_HOME} && python3 -m scipioninstaller ${S_USER_HOME}/scipion3 -noAsk -noXmipp -j $(nproc)"]
-
 # Install xmipp without native compilation flags
-RUN ["/bin/bash", "-c" , "${S_USER_HOME}/scipion3/scipion3 installp -p scipion-em-xmipp -j $(nproc) --noBin"] 
-RUN wget --progress=dot:giga http://scipion.cnb.csic.es/downloads/scipion/software/em/${XMIPP_VERSION}.tgz -O ${S_USER_HOME}/scipion3/software/em/${XMIPP_VERSION}.tgz \
-&& tar xfz ${S_USER_HOME}/scipion3/software/em/${XMIPP_VERSION}.tgz -C ${S_USER_HOME}/scipion3/software/em/ \
+\&& ["/bin/bash", "-c" , "${S_USER_HOME}/scipion3/scipion3 installp -p scipion-em-xmipp -j $(nproc) --noBin"] 
+\&& wget --progress=dot:giga http://scipion.cnb.csic.es/downloads/scipion/software/em/"${XMIPP_VERSION}".tgz -O ${S_USER_HOME}/scipion3/software/em/${XMIPP_VERSION}.tgz \
+&& tar xfz "${S_USER_HOME}"/scipion3/software/em/"${XMIPP_VERSION}".tgz -C "${S_USER_HOME}"/scipion3/software/em/ \
 && ["/bin/bash", "-c" , "cd ${S_USER_HOME}/scipion3/software/em/${XMIPP_VERSION} && ${S_USER_HOME}/scipion3/scipion3 run ${S_USER_HOME}/scipion3/software/em/${XMIPP_VERSION}/xmipp noAsk config"]
-RUN sed -i 's/-mtune=native -march=native //g' ${S_USER_HOME}/scipion3/software/em/${XMIPP_VERSION}/xmipp.conf
+\&& sed -i 's/-mtune=native -march=native //g' "${S_USER_HOME}"/scipion3/software/em/${XMIPP_VERSION}/xmipp.conf
 #RUN sed -i 's/CUDA=True/CUDA=False/g' ${S_USER_HOME}/scipion3/software/em/${XMIPP_VERSION}/xmipp.conf
-RUN ["/bin/bash", "-c" , "cd ${S_USER_HOME}/scipion3/software/em/${XMIPP_VERSION} && ${S_USER_HOME}/scipion3/scipion3 run ${S_USER_HOME}/scipion3/software/em/${XMIPP_VERSION}/xmipp compile"]
-RUN ["/bin/bash", "-c" , "cd ${S_USER_HOME}/scipion3/software/em/${XMIPP_VERSION} && ${S_USER_HOME}/scipion3/scipion3 run ${S_USER_HOME}/scipion3/software/em/${XMIPP_VERSION}/xmipp install"]
-RUN ln -s ${S_USER_HOME}/scipion3/software/em/${XMIPP_VERSION}/build ${S_USER_HOME}/scipion3/software/em/xmipp
+\&& ["/bin/bash", "-c" , "cd ${S_USER_HOME}/scipion3/software/em/${XMIPP_VERSION} && ${S_USER_HOME}/scipion3/scipion3 run ${S_USER_HOME}/scipion3/software/em/${XMIPP_VERSION}/xmipp compile"]
+\&& ["/bin/bash", "-c" , "cd ${S_USER_HOME}/scipion3/software/em/${XMIPP_VERSION} && ${S_USER_HOME}/scipion3/scipion3 run ${S_USER_HOME}/scipion3/software/em/${XMIPP_VERSION}/xmipp install"]
+\&& ln -s "${S_USER_HOME}"/scipion3/software/em/"${XMIPP_VERSION}"/build "${S_USER_HOME}"/scipion3/software/em/xmipp
 
 # data directory for mount NFS using docker volume
-RUN mkdir ${S_USER_HOME}/ScipionUserData \
+\&& mkdir "${S_USER_HOME}"/ScipionUserData \
 
 # Disable conda auto activation
-&& ${S_USER_HOME}/miniconda3/bin/conda config --set auto_activate_base false
+&& "${S_USER_HOME}"/miniconda3/bin/conda config --set auto_activate_base false
 
 # Install plugins for Scipion
-COPY plugin-list.txt ${S_USER_HOME}/
-RUN for pl in $(cat ${S_USER_HOME}/plugin-list.txt); do ${S_USER_HOME}/scipion3/scipion3 installp -p $pl -j $(nproc); done
+COPY plugin-list.txt "${S_USER_HOME}"/
 
+RUN while IFS= read -r pl; do "${S_USER_HOME}"/scipion3/scipion3 installp -p "$pl" -j "$(nproc)"; done < "${S_USER_HOME}"/plugin-list.txt\
 # Install deeplearningtoolkit
-RUN ${S_USER_HOME}/scipion3/scipion3 installb deepLearningToolkit -j $(nproc)
-
+&& "${S_USER_HOME}"/scipion3/scipion3 installb deepLearningToolkit -j "$(nproc)" \
 # Set the correct binary versions (this has to be reviewd to make it cleaner)
-
 # Modify MOTIONCOR2_BIN variable to point to cuda10.2 binary
 #RUN echo MOTIONCOR2_BIN=${S_USER_HOME}/scipion3/software/em/motioncor2-1.4.7/bin/MotionCor2_1.4.7_Cuda102_12-09-2021 >> ${S_USER_HOME}/scipion3/config/scipion.conf
-
 # Fix conda fonts
-RUN wget --progress=dot:giga https://anaconda.org/scipion/tk/8.6.10/download/linux-64/tk-8.6.10-h14c3975_1005.tar.bz2 -O ${S_USER_HOME}/tk-8.6.10-h14c3975_1005.tar.bz2 \
-&& ${S_USER_HOME}/scipion3/scipion3 run conda remove -y tk --force && ${S_USER_HOME}/scipion3/scipion3 run conda install -y ${S_USER_HOME}/tk-8.6.10-h14c3975_1005.tar.bz2
+&& wget --progress=dot:giga https://anaconda.org/scipion/tk/8.6.10/download/linux-64/tk-8.6.10-h14c3975_1005.tar.bz2 -O ${S_USER_HOME}/tk-8.6.10-h14c3975_1005.tar.bz2 \
+&& ${S_USER_HOME}/scipion3/scipion3 run conda remove -y tk --force && ${S_USER_HOME}/scipion3/scipion3 run conda install -y ${S_USER_HOME}/tk-8.6.10-h14c3975_1005.tar.bz2 \
 
 # Remove unused files
-RUN rm ${S_USER_HOME}/scipion3/software/em/*gz \
+&& rm ${S_USER_HOME}/scipion3/software/em/*gz \
 && rm ${S_USER_HOME}/miniconda.sh \
 && rm ${S_USER_HOME}/tk-8.6.10-h14c3975_1005.tar.bz2 \
 && ln -s ${S_USER_HOME}/ScipionUserData/data ${S_USER_HOME}/scipion3/data
