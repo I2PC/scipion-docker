@@ -1,60 +1,58 @@
-FROM nvidia/cudagl:10.2-devel-ubuntu18.04
+FROM nvidia/cudagl:11.3-devel-ubuntu20.04
 
 ARG S_USER=scipionuser
 ARG S_USER_HOME=/home/${S_USER}
 ARG XMIPP_VERSION=xmippSrc-v3.22.04.0
 
-LABEL LICENSE_RELION="https://raw.githubusercontent.com/3dem/relion/master/LICENSE" 
-LABEL LICENSE_CISTEM="http://license.janelia.org/license/janelia_license_1_2.html" 
-#      LICENSE_MOTIONCORR2="https://docs.google.com/forms/d/e/1FAIpQLSfAQm5MA81qTx90W9JL6ClzSrM77tytsvyyHh1ZZWrFByhmfQ/viewform" \
-LABEL LICENSE_FSC3D="https://3dfsc.salk.edu/upload/info/"
+LABEL license.relion="https://raw.githubusercontent.com/3dem/relion/master/LICENSE" 
+LABEL license.cistem="http://license.janelia.org/license/janelia_license_1_2.html" 
+LABEL license.motioncorr2="https://docs.google.com/forms/d/e/1FAIpQLSfAQm5MA81qTx90W9JL6ClzSrM77tytsvyyHh1ZZWrFByhmfQ/viewform"
+LABEL license.fsc3d="https://3dfsc.salk.edu/upload/info/"
 
 
 # Update nvidia repo keys
-RUN apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/3bf863cc.pub && \
+RUN apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/3bf863cc.pub && \
+apt-key adv --fecth-keys https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/7fa2af80.pub && \
 apt-get update && \
-apt-get upgrade -y
-
-# Install necessary packages
-RUN apt-get update && DEBIAN_FRONTEND="noninteractive" apt-get install -y --no-install-recommends \
-	tzdata \
-	bash \
-	make \
-	curl \
-	wget \
-	openssh-client \
-	ca-certificates \
-	python3 \
-	bison \
-	flex \
-	git \
-	sudo \
-    	gcc \
-    	g++ \
-	libxv1 \
-	openjdk-8-jdk \
-	libfftw3-dev \
-	libtiff-dev \
-    	libopenmpi-dev \
-    	openmpi-bin \
-    	mesa-utils \
-    	openssh-client \
-    	cmake \
-    	libnss3 \
-    	libfontconfig1 \
-    	libxrender1 \
-    	libxtst6 \
-    	xterm \
-	ibasound2 \
-    	libglu1 \
-    	libxcursor1 \
-    	libdbus-1-3 \
-	libxkbcommon-x11-0 \
-    	libhdf5-dev \
-    	libxft-dev \
-    	libpng-dev \
-	&& apt-get clean \
-    	&& rm -rf /var/lib/apt/lists/* 
+apt-get upgrade -y && \
+DEBIAN_FRONTEND="noninteractive" apt-get install -y --no-install-recommends \
+	tzdata=2022e-0ubuntu2 \
+	bash=5.0-6ubuntu1.2 \
+	make-dfsg=4.2.1-1.2 \
+	cmake=3.16.3-1ubuntu1 \
+	curl=7.68.0-1ubuntu2.13 \
+	wget=1.20.3-1ubuntu2 \
+	openssh=1:8.2p1-4ubuntu0.6 \
+	ca-certificates=20211016~20.04.1 \
+	python3=3.8.2-0ubuntu2 \
+	bison=2:3.5.1+dfsg-1 \
+	flex=2.6.4-6.2 \
+	git=1:2.25.1-1ubuntu3.5 \
+	sudo=1.8.31-1ubuntu1.2 \
+	gcc-10=10.3.0-1ubuntu1~20.04 \
+	g++-10=10.3.0-1ubuntu1~20.04 \
+	openjdk-11-jdk=11.0.16+8-0ubuntu1~20.04\
+	libfftw3-dev=3.3.8-2ubuntu1 \
+	libtiff-dev=4.1.0+git191117-2ubuntu0.20.04.5 \
+	libopenmpi-dev=4.0.3-0ubuntu1 \
+	openmpi-bin=4.0.3-0ubuntu1 \
+	mesa-utils=8.4.0-1build1 \
+	libnss3=2:3.49.1-1ubuntu1.8 \
+	libfontconfig1=2.13.1-2ubuntu3 \
+	libxrender1=1:0.9.10-1 \
+	libxtst6=2:1.2.3-1 \
+	xterm=353-1ubuntu1.20.04.2 \
+	libasound2=1.2.2-2.1 \
+	libglu1-mesa=9.0.1-1build1\
+	libxcursor1=1:1.2.0-2 \
+	libdbus-1-3=1.12.16-2ubuntu2.2 \
+	libxkbcommon-x11-0=0.10.0-1 \
+	libhdf5-dev=1.10.4+repack-11ubuntu1 \
+	libxft-dev=2.3.3-0ubuntu1 \
+	libpng-dev=1.6.37-2 \
+	libxv1=2:1.0.11-1 \
+&& apt-get clean \
+&& rm -rf /var/lib/apt/lists/* 
 
 # Create scipionuser
 RUN groupadd --gid 1042 ${S_USER} && \
