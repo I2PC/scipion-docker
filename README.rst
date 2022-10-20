@@ -1,4 +1,5 @@
-# Scipion-docker
+Scipion-docker
+--------------
 
 This repo contains all pieces of code needed to deploy an scipion single node or a slurm cluster.
 
