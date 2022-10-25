@@ -25,36 +25,36 @@ RUN apt-get update && DEBIAN_FRONTEND="noninteractive" apt-get install -y --no-i
 	openssh-client \
 	ca-certificates \
 	python3 \
+	python3-pip \
 	bison \
 	flex \
 	git \
 	sudo \
-    	gcc \
-    	g++ \
+    gcc \
+    g++ \
 	libxv1 \
 	openjdk-8-jdk \
 	libfftw3-dev \
 	libtiff-dev \
-    	libopenmpi-dev \
-    	openmpi-bin \
-    	mesa-utils \
-    	openssh-client \
-    	cmake \
-    	libnss3 \
-    	libfontconfig1 \
-    	libxrender1 \
-    	libxtst6 \
-    	xterm \
-	ibasound2 \
-    	libglu1 \
-    	libxcursor1 \
-    	libdbus-1-3 \
+    libopenmpi-dev \
+    openmpi-bin \
+    mesa-utils \
+    openssh-client \
+    cmake \
+    libnss3 \
+    libfontconfig1 \
+    libxrender1 \
+    libxtst6 \
+    xterm \
+    libglu1 \
+    libxcursor1 \
+    libdbus-1-3 \
 	libxkbcommon-x11-0 \
-    	libhdf5-dev \
-    	libxft-dev \
-    	libpng-dev \
+    libhdf5-dev \
+    libxft-dev \
+    libpng-dev \
 	&& apt-get clean \
-    	&& rm -rf /var/lib/apt/lists/* 
+    && rm -rf /var/lib/apt/lists/*
 
 # Create scipionuser
 RUN groupadd --gid 1042 ${S_USER} && \
@@ -71,27 +71,24 @@ ENV NVIDIA_DRIVER_CAPABILITIES compute,utility
 USER ${S_USER}
 #######################
 
-RUN ["/bin/bash", "-c", "echo $CUDA_HOME"]
-RUN ["/bin/bash", "-c", "echo $PATH"]
-
-
 # Install Scipion
-RUN wget --progress=dot:giga https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ${S_USER_HOME}/miniconda.sh \
-&& bash ${S_USER_HOME}/miniconda.sh -b \
-&& ${S_USER_HOME}/miniconda3/bin/conda init \
-&& ["/bin/bash", "-ci" , "python3 -m pip install scipion-installer"] \
-&& ["/bin/bash", "-ci" , "cd ${S_USER_HOME} && python3 -m scipioninstaller ${S_USER_HOME}/scipion3 -noAsk -noXmipp -j $(nproc)"]
+RUN wget --progress=dot:giga https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ${S_USER_HOME}/miniconda.sh
+RUN chmod a+x ${S_USER_HOME}/miniconda.sh \
+&& ${S_USER_HOME}/miniconda.sh -b \
+&& ${S_USER_HOME}/miniconda3/bin/conda init
+RUN ["/bin/bash", "-ci" , "python3 -m pip install scipion-installer"]
+RUN ["/bin/bash", "-ci" , "cd ${S_USER_HOME} && python3 -m scipioninstaller ${S_USER_HOME}/scipion3 -noAsk -noXmipp -j $(nproc)"]
 
 # Install xmipp without native compilation flags
 RUN ["/bin/bash", "-c" , "${S_USER_HOME}/scipion3/scipion3 installp -p scipion-em-xmipp -j $(nproc) --noBin"] 
 RUN wget --progress=dot:giga http://scipion.cnb.csic.es/downloads/scipion/software/em/${XMIPP_VERSION}.tgz -O ${S_USER_HOME}/scipion3/software/em/${XMIPP_VERSION}.tgz \
-&& tar xfz ${S_USER_HOME}/scipion3/software/em/${XMIPP_VERSION}.tgz -C ${S_USER_HOME}/scipion3/software/em/ \
-&& ["/bin/bash", "-c" , "cd ${S_USER_HOME}/scipion3/software/em/${XMIPP_VERSION} && ${S_USER_HOME}/scipion3/scipion3 run ${S_USER_HOME}/scipion3/software/em/${XMIPP_VERSION}/xmipp noAsk config"]
-RUN sed -i 's/-mtune=native -march=native //g' ${S_USER_HOME}/scipion3/software/em/${XMIPP_VERSION}/xmipp.conf
+&& tar xfz ${S_USER_HOME}/scipion3/software/em/${XMIPP_VERSION}.tgz -C ${S_USER_HOME}/scipion3/software/em/
+RUN ["/bin/bash", "-c" , "cd ${S_USER_HOME}/scipion3/software/em/${XMIPP_VERSION} && ${S_USER_HOME}/scipion3/scipion3 run ${S_USER_HOME}/scipion3/software/em/${XMIPP_VERSION}/xmipp noAsk config"]
+RUN ["/bin/bash", "-c" , "sed -i 's/-mtune=native -march=native //g' ${S_USER_HOME}/scipion3/software/em/${XMIPP_VERSION}/xmipp.conf"] 
 #RUN sed -i 's/CUDA=True/CUDA=False/g' ${S_USER_HOME}/scipion3/software/em/${XMIPP_VERSION}/xmipp.conf
 RUN ["/bin/bash", "-c" , "cd ${S_USER_HOME}/scipion3/software/em/${XMIPP_VERSION} && ${S_USER_HOME}/scipion3/scipion3 run ${S_USER_HOME}/scipion3/software/em/${XMIPP_VERSION}/xmipp compile"]
-RUN ["/bin/bash", "-c" , "cd ${S_USER_HOME}/scipion3/software/em/${XMIPP_VERSION} && ${S_USER_HOME}/scipion3/scipion3 run ${S_USER_HOME}/scipion3/software/em/${XMIPP_VERSION}/xmipp install"]
-RUN ln -s ${S_USER_HOME}/scipion3/software/em/${XMIPP_VERSION}/build ${S_USER_HOME}/scipion3/software/em/xmipp
+RUN ["/bin/bash", "-c" , "cd ${S_USER_HOME}/scipion3/software/em/${XMIPP_VERSION} && ${S_USER_HOME}/scipion3/scipion3 run ${S_USER_HOME}/scipion3/software/em/${XMIPP_VERSION}/xmipp install"] \
+&& ln -s ${S_USER_HOME}/scipion3/software/em/${XMIPP_VERSION}/build ${S_USER_HOME}/scipion3/software/em/xmipp
 
 # data directory for mount NFS using docker volume
 RUN mkdir ${S_USER_HOME}/ScipionUserData \
