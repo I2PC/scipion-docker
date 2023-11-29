@@ -68,9 +68,9 @@ under the Device or Screen section.
 
 https://docs.docker.com/engine/install/ubuntu/
 
-**Nvidia runtime installation**
+**Nvidia container toolkit installation**
 
-https://github.com/NVIDIA/nvidia-docker/wiki/Installation-(Native-GPU-Support)
+[https://github.com/NVIDIA/nvidia-docker/wiki/Installation-(Native-GPU-Support)](https://github.com/NVIDIA/nvidia-container-toolkit)
 
 **Configuration**
 
